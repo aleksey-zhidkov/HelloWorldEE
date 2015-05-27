@@ -31,10 +31,14 @@ private fun app() {
     val nameFactory = NameFactory()
     val name = nameFactory.createName() ?: throw RuntimeException("Not named user!")
 
-    println("""
+    println(+"""
     Hello!
     I'm ${name.firstName}...
     ${name.lastName} ${name.firstName}...
     ${name.lastName} ${name.firstName} ${name.middleName}
     """)
 }
+
+fun String.plus() = this.trim().split("\n").
+        map { it.trim() }.
+        join("\n")
