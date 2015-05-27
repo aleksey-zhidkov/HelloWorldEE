@@ -6,12 +6,13 @@ data class Name(val firstName: String,
                 val middleName: String?,
                 val lastName: String?)
 
-trait NameFactory {
+trait NameFactory : Function0<Name?> {
 
     fun createName(): Name?
 
     fun defaultName(): Name
 
+    override fun invoke(): Name? = this.createName()
 }
 
 class ConsoleNameFactory : NameFactory {
@@ -43,15 +44,31 @@ class CachingNameFactory(delegate: NameFactory = ConsoleNameFactory()) : NameFac
 
     override fun createName(): Name? = name
 
+    override fun invoke(): Name? = super.invoke()
+}
+
+val nameProducer = { ->
+    println("[LOG] Creating name")
+    Name("", null, null)
+}
+
+inline fun memoize<reified T>(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) body: () -> T): () -> T {
+    var cache: T = null
+    return { ->
+        if (cache == null) {
+            cache = body()
+        }
+        cache
+    }
 }
 
 fun main(args: Array<String>) {
-    app(CachingNameFactory())
+    app(memoize(nameProducer))
 }
 
-private fun app(nameFactory: NameFactory) {
+private fun app(nameFactory: () -> Name?) {
     println("Hello! I'm Bond. James Bond.")
-    val name = nameFactory.createName() ?: nameFactory.defaultName()
+    val name = nameFactory() ?: throw RuntimeException("Unnamed user")
 
     val line1 = "I'm ${name.firstName}..."
     val line2 = name.lastName?.let { "${name.lastName} ${name.firstName}..." } ?: ""
@@ -63,7 +80,7 @@ private fun app(nameFactory: NameFactory) {
      $line3
     """)
 
-    nameFactory.createName()
+    nameFactory()
 }
 
 fun String.plus() = this.trim().split("\n").
