@@ -23,7 +23,18 @@ class NameFactory {
 }
 
 fun main(args: Array<String>) {
+    app()
+}
+
+private fun app() {
+    println("Hello! I'm Bond. James Bond.")
     val nameFactory = NameFactory()
-    val name = nameFactory.createName()
-    println("Hello $name!")
+    val name = nameFactory.createName() ?: throw RuntimeException("Not named user!")
+
+    println("""
+    Hello!
+    I'm ${name.firstName}...
+    ${name.lastName} ${name.firstName}...
+    ${name.lastName} ${name.firstName} ${name.middleName}
+    """)
 }
