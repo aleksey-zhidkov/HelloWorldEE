@@ -1,8 +1,8 @@
 package helloworld
 
-class Name(val firstName: String,
-           val middleName: String?,
-           val lastName: String?)
+data class Name(val firstName: String,
+                val middleName: String?,
+                val lastName: String?)
 
 class NameFactory {
 
