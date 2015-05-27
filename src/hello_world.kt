@@ -1,5 +1,7 @@
 package helloworld
 
+import kotlin.properties.Delegates
+
 data class Name(val firstName: String,
                 val middleName: String?,
                 val lastName: String?)
@@ -15,6 +17,7 @@ trait NameFactory {
 class ConsoleNameFactory : NameFactory {
 
     public override fun createName(): Name? = readLine()?.let {
+        println("[LOG] Creating name...")
         val nameParts = it.split(" ")
         val firstName = nameParts[0]
 
@@ -32,8 +35,18 @@ class ConsoleNameFactory : NameFactory {
 
 }
 
+class CachingNameFactory(delegate: NameFactory = ConsoleNameFactory()) : NameFactory by delegate {
+
+    private val name by Delegates.lazy {
+        delegate.createName()
+    }
+
+    override fun createName(): Name? = name
+
+}
+
 fun main(args: Array<String>) {
-    app(ConsoleNameFactory())
+    app(CachingNameFactory())
 }
 
 private fun app(nameFactory: NameFactory) {
@@ -49,6 +62,8 @@ private fun app(nameFactory: NameFactory) {
      $line2
      $line3
     """)
+
+    nameFactory.createName()
 }
 
 fun String.plus() = this.trim().split("\n").
