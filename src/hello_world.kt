@@ -4,9 +4,17 @@ data class Name(val firstName: String,
                 val middleName: String?,
                 val lastName: String?)
 
-class NameFactory {
+trait NameFactory {
 
-    public fun createName(): Name? = readLine()?.let {
+    fun createName(): Name?
+
+    fun defaultName(): Name
+
+}
+
+class ConsoleNameFactory : NameFactory {
+
+    public override fun createName(): Name? = readLine()?.let {
         val nameParts = it.split(" ")
         val firstName = nameParts[0]
 
@@ -20,16 +28,17 @@ class NameFactory {
         Name(firstName, middleName, lastName)
     }
 
+    override fun defaultName() = Name("", null, null)
+
 }
 
 fun main(args: Array<String>) {
-    app()
+    app(ConsoleNameFactory())
 }
 
-private fun app() {
+private fun app(nameFactory: NameFactory) {
     println("Hello! I'm Bond. James Bond.")
-    val nameFactory = NameFactory()
-    val name = nameFactory.createName() ?: throw RuntimeException("Not named user!")
+    val name = nameFactory.createName() ?: nameFactory.defaultName()
 
     val line1 = "I'm ${name.firstName}..."
     val line2 = name.lastName?.let { "${name.lastName} ${name.firstName}..." } ?: ""
