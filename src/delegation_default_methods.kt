@@ -28,6 +28,6 @@ class CachingNameFactory(delegate: NameFactory = ConsoleNameFactory()) : NameFac
 
 fun main(args: Array<String>) {
     val f = CachingNameFactory()
-    f.createName()
-    f.createName()
+    f.createName() // Creating name are printed
+    f.createName() // Creating name are printed too, while expected, that it will be cached
 }

@@ -20,10 +20,6 @@ public enum JEnumStaticInit {
         this.id = id;
     }
 
-    /**
-     * Resolves feature by id. It's required to separate DB values from source code, so source code could
-     * be safely refactored (e.g. constants renamed and/or reordered) without breaking mapping.
-     */
     public static JEnumStaticInit byId(String id) {
         if (byId.containsKey(id)) {
             return byId.get(id);
